@@ -26,10 +26,14 @@ describe("Hacker Stories", () => {
 
     it('shows 20 stories, then the next 20 after clicking "More"', () => {
       cy.get(".item").should("have.length", 20);
+      cy.intercept({
+        method: "GET",
+        pathname: "**/search",
+        query: { query: "React", page: "1" },
+      }).as("getNextStores");
 
       cy.contains("More").click();
-
-      cy.assertLoadingIsShownAndHidden();
+      cy.wait("@getNextStores");
 
       cy.get(".item").should("have.length", 40);
     });
