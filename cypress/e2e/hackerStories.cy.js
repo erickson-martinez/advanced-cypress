@@ -1,9 +1,9 @@
 describe("Hacker Stories", () => {
   beforeEach(() => {
+    cy.intercept("GET", "**/search?query=React&page=0").as("getStores");
     cy.visit("/");
 
-    cy.assertLoadingIsShownAndHidden();
-    cy.contains("More").should("be.visible");
+    cy.wait("@getStores");
   });
 
   it("shows the footer", () => {
@@ -109,7 +109,7 @@ describe("Hacker Stories", () => {
         const faker = require("@faker-js/faker");
 
         Cypress._.times(6, () => {
-          cy.get("#search").clear().type(`${faker.random.word()}{enter}`);
+          cy.get("#search").clear().type(`${faker.word.adjective()}{enter}`);
         });
 
         cy.assertLoadingIsShownAndHidden();
