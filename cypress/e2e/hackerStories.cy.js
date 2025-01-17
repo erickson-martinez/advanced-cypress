@@ -1,6 +1,10 @@
 describe("Hacker Stories", () => {
   beforeEach(() => {
-    cy.intercept("GET", "**/search?query=React&page=0").as("getStores");
+    cy.intercept({
+      method: "GET",
+      pathname: "**/search",
+      query: { query: "React", page: "0" },
+    }).as("getStores");
     cy.visit("/");
 
     cy.wait("@getStores");
