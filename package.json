@@ -1,0 +1,35 @@
+{
+  "name": "curso-cypress-avancado",
+  "version": "1.0.0",
+  "description": "Repository of advanced knowledge of Cypress",
+  "main": "index.js",
+  "scripts": {
+    "lint": "npx standard",
+    "lint:fix": "npx standard --fix",
+    "test": "cypress run",
+    "cy:open": "cypress open"
+  },
+  "standard": {
+    "globals": [
+      "beforeEach",
+      "context",
+      "cy",
+      "Cypress",
+      "describe",
+      "it"
+    ]
+  },
+  "keywords": [
+    "cypress",
+    "cypress.io",
+    "testing"
+  ],
+  "author": "Erickson",
+  "license": "MIT",
+  "dependencies": {
+    "@faker-js/faker": "^9.4.0",
+    "cypress": "^14.0.0",
+    "cypress-localstorage-commands": "^2.2.7",
+    "standardjs": "^1.0.0-alpha"
+  }
+}
