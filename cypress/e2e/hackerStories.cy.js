@@ -4,10 +4,10 @@ describe("Hacker Stories", () => {
       method: "GET",
       pathname: "**/search",
       query: { query: "React", page: "0" },
-    }).as("getStores");
+    }).as("getStories");
     cy.visit("/");
 
-    cy.wait("@getStores");
+    cy.wait("@getStories");
   });
 
   it("shows the footer", () => {
@@ -30,10 +30,10 @@ describe("Hacker Stories", () => {
         method: "GET",
         pathname: "**/search",
         query: { query: "React", page: "1" },
-      }).as("getNextStores");
+      }).as("getNextStories");
 
       cy.contains("More").click();
-      cy.wait("@getNextStores");
+      cy.wait("@getNextStories");
 
       cy.get(".item").should("have.length", 40);
     });
@@ -74,13 +74,16 @@ describe("Hacker Stories", () => {
     const newTerm = "Cypress";
 
     beforeEach(() => {
+      cy.intercept("GET", `**/search?query=${newTerm}&page=0`).as(
+        "getNewTermStories"
+      );
       cy.get("#search").clear();
     });
 
     it("types and hits ENTER", () => {
       cy.get("#search").type(`${newTerm}{enter}`);
 
-      cy.assertLoadingIsShownAndHidden();
+      cy.wait("@getNewTermStories");
 
       cy.get(".item").should("have.length", 20);
       cy.get(".item").first().should("contain", newTerm);
