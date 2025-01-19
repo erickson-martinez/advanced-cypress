@@ -64,11 +64,6 @@ describe("Hacker Stories", () => {
     // Hrm, how would I simulate such errors?
     // Since I still don't know, the tests are being skipped.
     // TODO: Find a way to test them out.
-    context.skip("Errors", () => {
-      it('shows "Something went wrong ..." in case of a server error', () => {});
-
-      it('shows "Something went wrong ..." in case of a network error', () => {});
-    });
   });
 
   context("Search", () => {
@@ -103,6 +98,15 @@ describe("Hacker Stories", () => {
       cy.get(`button:contains(${initialTerm})`).should("be.visible");
     });
 
+    it("types and submit the form directly", () => {
+      cy.get("#search").type(newTerm);
+      cy.get("form").submit();
+
+      cy.wait("@getNewTermStories");
+
+      cy.get(".item").should("have.length", 20);
+    });
+
     context("Last searches", () => {
       it("searches via the last searched term", () => {
         cy.get("#search").type(`${newTerm}{enter}`);
@@ -131,5 +135,27 @@ describe("Hacker Stories", () => {
         cy.get(".last-searches button").should("have.length", 5);
       });
     });
+  });
+});
+
+context.only("Errors", () => {
+  it('shows "Something went wrong ..." in case of a server error', () => {
+    cy.intercept("GET", "**/search**", { statusCode: 500 }).as(
+      "getServerFailure"
+    );
+
+    cy.visit("/");
+    cy.wait("@getServerFailure");
+    cy.get("p:contains(Something went wrong ...)").should("be.visible");
+  });
+
+  it('shows "Something went wrong ..." in case of a network error', () => {
+    cy.intercept("GET", "**/search**", { forceNetworkError: true }).as(
+      "getNetworkFailure"
+    );
+
+    cy.visit("/");
+    cy.wait("@getNetworkFailure");
+    cy.get("p:contains(Something went wrong ...)").should("be.visible");
   });
 });
