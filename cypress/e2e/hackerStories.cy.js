@@ -1,3 +1,5 @@
+import { faker } from "@faker-js/faker";
+
 describe("Hacker Stories", () => {
   beforeEach(() => {
     cy.intercept({
@@ -117,13 +119,14 @@ describe("Hacker Stories", () => {
       });
 
       it("shows a max of 5 buttons for the last searched terms", () => {
-        const faker = require("@faker-js/faker");
-
         Cypress._.times(6, () => {
-          cy.get("#search").clear().type(`${faker.word.adjective()}{enter}`);
+          const randomTerm = faker.word.adjective();
+          cy.intercept("GET", `**/search?query=${randomTerm}&page=0`).as(
+            "getRandomTermStories"
+          );
+          cy.get("#search").clear().type(`${randomTerm}{enter}`);
+          cy.wait("@getRandomTermStories");
         });
-
-        cy.assertLoadingIsShownAndHidden();
 
         cy.get(".last-searches button").should("have.length", 5);
       });
