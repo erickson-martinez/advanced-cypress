@@ -1,0 +1,22 @@
+{
+    "hits": [
+        {
+            "title": "Sampl 1",
+            "url": "https://exempla.cpm/1",
+            "author": "Author 1",
+            "num_comments": 34,
+            "points": 91,
+            "objectID": 1,
+            "story_id": 1
+        },
+        {
+            "title": "Sampl 2",
+            "url": "https://exempla.cpm/2",
+            "author": "Author 2",
+            "num_comments": 54,
+            "points": 99,
+            "objectID": 2,
+            "story_id": 2
+        }
+    ]
+}
