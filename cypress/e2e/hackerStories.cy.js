@@ -50,7 +50,7 @@ describe("Hacker Stories", () => {
     context("Footer and list of stores", () => {
       beforeEach(() => {
         cy.intercept("GET", `**/search?query=${initialTerm}&page=0`, {
-          fixture: "stores",
+          fixture: "stories",
         }).as("getStories");
         cy.visit("/");
         cy.wait("@getStories");
@@ -62,12 +62,25 @@ describe("Hacker Stories", () => {
           .and("contain", "Icons made by Freepik from www.flaticon.com");
       });
       context("List of stories", () => {
-        // Since the API is external,
-        // I can't control what it will provide to the frontend,
-        // and so, how can I assert on the data?
-        // This is why this test is being skipped.
-        // TODO: Find a way to test it out.
-        it.skip("shows the right data for all rendered stories", () => {});
+        it("shows the right data for all rendered stories", () => {
+          cy.fixture("stories").then((story) => {
+            cy.log(story.hits[0].title);
+
+            cy.get("div > .item")
+              .first()
+              .should("contain", story.hits[0].title)
+              .should("contain", story.hits[0].author)
+              .should("contain", story.hits[0].num_comments)
+              .should("contain", story.hits[0].points);
+
+            cy.get("div > .item")
+              .last()
+              .should("contain", story.hits[1].title)
+              .should("contain", story.hits[1].author)
+              .should("contain", story.hits[1].num_comments)
+              .should("contain", story.hits[1].points);
+          });
+        });
 
         it("shows one less story after dimissing the first one", () => {
           cy.get(".button-small").first().click();
@@ -95,13 +108,13 @@ describe("Hacker Stories", () => {
       });
     });
 
-    context.only("Search", () => {
+    context("Search", () => {
       beforeEach(() => {
         cy.intercept("GET", `**/search?query=${initialTerm}&page=0`, {
           fixture: "empty",
         }).as("getEmptyStories");
         cy.intercept("GET", `**/search?query=${newTerm}&page=0`, {
-          fixture: "stores",
+          fixture: "stories",
         }).as("getStories");
         cy.visit("/");
         cy.wait("@getEmptyStories");
