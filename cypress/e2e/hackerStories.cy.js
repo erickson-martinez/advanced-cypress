@@ -93,18 +93,85 @@ describe("Hacker Stories", () => {
         // and so, how can I test ordering?
         // This is why these tests are being skipped.
         // TODO: Find a way to test them out.
-        context.skip("Order by", () => {
-          it("orders by title", () => {});
+        context("Order by", () => {
+          it("orders by title", () => {
+            cy.get(`.list-header-button:contains("Title")`)
+              .as("titleHeader")
+              .click();
+            cy.fixture("stories").then((story) => {
+              cy.get(".item")
+                .first()
+                .should("be.visible")
+                .should("contain", story.hits[0].title);
+              cy.get(".item a")
+                .first()
+                .should("have.attr", "href", story.hits[0].url);
 
-          it("orders by author", () => {});
+              cy.get("@titleHeader").click();
+              cy.get(".item")
+                .first()
+                .should("be.visible")
+                .should("contain", story.hits[1].title);
+              cy.get(".item a")
+                .first()
+                .should("have.attr", "href", story.hits[1].url);
+            });
+          });
 
-          it("orders by comments", () => {});
+          it("orders by author", () => {
+            cy.get(`.list-header-button:contains("Author")`)
+              .as("authorHeader")
+              .click();
+            cy.fixture("stories").then((story) => {
+              cy.get(".item")
+                .first()
+                .should("be.visible")
+                .should("contain", story.hits[0].author);
 
-          it("orders by points", () => {});
+              cy.get("@authorHeader").click();
+              cy.get(".item")
+                .first()
+                .should("be.visible")
+                .should("contain", story.hits[1].author);
+            });
+          });
+
+          it("orders by comments", () => {
+            cy.get(`.list-header-button:contains("Comments")`)
+              .as("commentsHeader")
+              .click();
+            cy.fixture("stories").then((story) => {
+              cy.get(".item")
+                .first()
+                .should("be.visible")
+                .should("contain", story.hits[1].num_comments);
+
+              cy.get("@commentsHeader").click();
+              cy.get(".item")
+                .first()
+                .should("be.visible")
+                .should("contain", story.hits[0].num_comments);
+            });
+          });
+
+          it("orders by points", () => {
+            cy.get(`.list-header-button:contains("Points")`)
+              .as("pointsHeader")
+              .click();
+            cy.fixture("stories").then((story) => {
+              cy.get(".item")
+                .first()
+                .should("be.visible")
+                .should("contain", story.hits[1].points);
+
+              cy.get("@pointsHeader").click();
+              cy.get(".item")
+                .first()
+                .should("be.visible")
+                .should("contain", story.hits[0].points);
+            });
+          });
         });
-        // Hrm, how would I simulate such errors?
-        // Since I still don't know, the tests are being skipped.
-        // TODO: Find a way to test them out.
       });
     });
 
@@ -119,6 +186,10 @@ describe("Hacker Stories", () => {
         cy.visit("/");
         cy.wait("@getEmptyStories");
         cy.get("#search").clear();
+      });
+
+      it("shows no story when none is returned", () => {
+        cy.get(".item").should("not.exist");
       });
 
       it("types and hits ENTER", () => {
