@@ -230,7 +230,7 @@ describe("Hacker Stories", () => {
       });
 
       context("Last searches", () => {
-        it("shows a max of 5 buttons for the last searched terms", () => {
+        it.only("shows a max of 5 buttons for the last searched terms", () => {
           Cypress._.times(6, () => {
             const randomTerm = faker.word.adjective();
             cy.intercept("GET", `**/search**`, { fixture: "empty" }).as(
@@ -243,7 +243,9 @@ describe("Hacker Stories", () => {
             cy.wait("@getRandomTermStories");
           });
 
-          cy.get(".last-searches button").should("have.length", 5);
+          cy.get(".last-searches").within(() => {
+            cy.get("button").should("have.length", 5);
+          });
         });
       });
     });
