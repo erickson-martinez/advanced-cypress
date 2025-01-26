@@ -30,7 +30,7 @@ describe("Hacker Stories", () => {
       cy.get(".item").should("have.length", 40);
     });
 
-    it.only("searches via the last searched term", () => {
+    it("searches via the last searched term", () => {
       cy.intercept("GET", `**/search?query=${newTerm}&page=0`).as("getStories");
       cy.get("#search").should("be.visible").clear().type(`${newTerm}{enter}`);
 
@@ -280,4 +280,14 @@ context("Errors", () => {
     cy.wait("@getNetworkFailure");
     cy.get("p:contains(Something went wrong ...)").should("be.visible");
   });
+});
+
+it('Show a "Loading ..." state before showing the results', () => {
+  cy.intercept("GET", "**/search**", { delay: 2000, fixture: "stories" }).as(
+    "getDelayedStories"
+  );
+  cy.visit("/");
+  cy.assertLoadingIsShownAndHidden();
+  cy.wait("@getDelayedStories");
+  cy.get(".item").should("have.length", 2);
 });
